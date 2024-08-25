@@ -17,9 +17,9 @@ public record Run(
         Location location
 ) {
 
-    public Run{
-        if(startedOn.isAfter(completedOn)){
-            throw new IllegalArgumentException("Run cannot be completed before it starts");
+    public Run {
+        if (!completedOn.isAfter(startedOn)) {
+            throw new IllegalArgumentException("Completed On must be after Started On");
         }
     }
 
