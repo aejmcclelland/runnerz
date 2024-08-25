@@ -12,20 +12,22 @@ import java.util.Optional;
 @RequestMapping("/api/runs")
 class RunController {
 
+    private final RunRepository RunRepository;
     private final RunRepository runRepository;
 
-    RunController(RunRepository runRepository) {
+    RunController( RunRepository runRepository) {
+        this.RunRepository = runRepository;
         this.runRepository = runRepository;
     }
 
     @GetMapping
     List<Run> findAll() {
-        return runRepository.findAll();
+        return RunRepository.findAll();
     }
 
     @GetMapping("/{id}")
     Run findById(@PathVariable Integer id) {
-        Optional<Run> run = runRepository.findById(id);
+        Optional<Run> run = RunRepository.findById(id);
         if(run.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Run not found.");
         }
@@ -35,22 +37,23 @@ class RunController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     void create(@Valid @RequestBody Run run) {
-        runRepository.create(run);
+        RunRepository.save(run);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
     void update(@Valid @RequestBody Run run, @PathVariable Integer id) {
-        runRepository.update(run,id);
+        RunRepository.save(run);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     void delete(@PathVariable Integer id) {
-        runRepository.delete(id);
+        RunRepository.delete(runRepository.findById(id).get());
     }
 
-    List<Run> findByLocation(@RequestParam String location) {
-        return runRepository.findByLocation(location);
+    @GetMapping("/location/{location}")
+    List<Run> findByLocation(@PathVariable String location) {
+        return RunRepository.findByLocation(location);
     }
 }
